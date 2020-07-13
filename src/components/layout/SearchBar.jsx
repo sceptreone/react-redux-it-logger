@@ -5,6 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { searchLogs } from '../../actions/logActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,8 +64,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchAppBar() {
+const SearchAppBar = ({ searchLogs }) => {
   const classes = useStyles();
+
+  const onChange = (e) => {
+    searchLogs(e.target.value);
+  };
 
   return (
     <div className={classes.root}>
@@ -76,7 +83,8 @@ export default function SearchAppBar() {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder='Search…'
+              placeholder='Search Logs...'
+              onChange={onChange}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
@@ -88,4 +96,10 @@ export default function SearchAppBar() {
       </AppBar>
     </div>
   );
-}
+};
+
+SearchAppBar.propTypes = {
+  searchLogs: PropTypes.func.isRequired,
+};
+
+export default connect(null, { searchLogs })(SearchAppBar);

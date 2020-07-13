@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { addLog } from '../../actions/logActions';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -40,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddLogModal = ({ logModal, logModalClose }) => {
+const AddLogModal = ({ logModal, logModalClose, addLog }) => {
   const [message, setMessage] = useState('');
   const [attention, setAttention] = useState(false);
   const [tech, setTech] = useState('');
@@ -61,12 +65,21 @@ const AddLogModal = ({ logModal, logModalClose }) => {
   };
 
   const onSubmit = () => {
-    console.log(message, tech, attention);
+    const newLog = {
+      message,
+      attention,
+      tech,
+      date: new Date(),
+    };
+    console.log(newLog);
+
+    addLog(newLog);
 
     //Clear Fields
     setMessage('');
     setTech('');
     setAttention(false);
+    modalHandleClose();
   };
 
   return (
@@ -149,4 +162,8 @@ const AddLogModal = ({ logModal, logModalClose }) => {
   );
 };
 
-export default AddLogModal;
+AddLogModal.propTypes = {
+  addLog: PropTypes.func.isRequired,
+};
+
+export default connect(null, { addLog })(AddLogModal);

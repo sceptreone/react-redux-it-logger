@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { updateLog } from '../../actions/logActions';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -40,33 +44,56 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EditLogModal = ({ modal, modalClose }) => {
+const EditLogModal = ({
+  editLogModal,
+  editLogModalClose,
+  current,
+  updateLog,
+}) => {
   const [message, setMessage] = useState('');
   const [attention, setAttention] = useState(false);
   const [tech, setTech] = useState('');
 
+  useEffect(() => {
+    if (current) {
+      setMessage(current.message);
+      setAttention(current.attention);
+      setTech(current.tech);
+    }
+  }, [current]);
+
   const classes = useStyles();
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    if (modal === true) {
+    if (editLogModal === true) {
       setModalOpen(true);
     }
     // eslint-disable-next-line
-  }, [modal]);
+  }, [editLogModal]);
 
   const modalHandleClose = () => {
     setModalOpen(false);
-    modalClose();
+    editLogModalClose();
   };
 
   const onSubmit = () => {
-    console.log(message, tech, attention);
+    const updatedLog = {
+      id: current.id,
+      message,
+      attention,
+      tech,
+      date: new Date(),
+    };
+
+    updateLog(updatedLog);
 
     //Clear Fields
     setMessage('');
     setTech('');
     setAttention(false);
+
+    modalHandleClose();
   };
 
   return (
@@ -151,4 +178,12 @@ const EditLogModal = ({ modal, modalClose }) => {
   );
 };
 
-export default EditLogModal;
+EditLogModal.propTypes = {
+  updateLog: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  current: state.log.current,
+});
+
+export default connect(mapStateToProps, { updateLog })(EditLogModal);
