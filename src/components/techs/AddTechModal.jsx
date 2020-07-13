@@ -9,6 +9,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import FormGroup from '@material-ui/core/FormGroup';
 import Button from '@material-ui/core/Button';
+import { connect } from 'react-redux';
+import { addTech } from '../../actions/techActions';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -33,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddTechModal = ({ techModal, techModalClose }) => {
+const AddTechModal = ({ techModal, techModalClose, addTech }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
@@ -53,11 +56,15 @@ const AddTechModal = ({ techModal, techModalClose }) => {
   };
 
   const onSubmit = () => {
-    console.log(firstName, lastName);
+    addTech({
+      firstName,
+      lastName,
+    });
 
     //Clear Fields
     setFirstName('');
     setLastName('');
+    modalHandleClose();
   };
 
   return (
@@ -114,4 +121,8 @@ const AddTechModal = ({ techModal, techModalClose }) => {
   );
 };
 
-export default AddTechModal;
+AddTechModal.propTypes = {
+  addTech: PropTypes.func.isRequired,
+};
+
+export default connect(null, { addTech })(AddTechModal);

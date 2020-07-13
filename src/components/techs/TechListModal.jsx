@@ -13,6 +13,9 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 
 import TechItem from './TechItem';
+import { connect } from 'react-redux';
+import { getTechs } from '../../actions/techActions';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,21 +39,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TechListModal = ({ techListModal, techListModalClose }) => {
+const TechListModal = ({
+  techListModal,
+  techListModalClose,
+  getTechs,
+  tech: { techs, loading },
+}) => {
   const classes = useStyles();
-  const [techs, setTechs] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const getTechs = async () => {
-    setLoading(true);
-
-    const res = await fetch('/techs');
-    const data = await res.json();
-
-    setTechs(data);
-    setLoading(false);
-  };
 
   useEffect(() => {
     if (techListModal === true) {
@@ -97,7 +93,7 @@ const TechListModal = ({ techListModal, techListModalClose }) => {
             className={classes.root}
           >
             <Divider />
-            {!loading && techs.length === 0 ? (
+            {!loading && techs === null ? (
               <ListItem>
                 <ListItemIcon>
                   <DescriptionIcon />
@@ -114,4 +110,12 @@ const TechListModal = ({ techListModal, techListModalClose }) => {
   );
 };
 
-export default TechListModal;
+TechListModal.propTypes = {
+  getTechs: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  tech: state.tech,
+});
+
+export default connect(mapStateToProps, { getTechs })(TechListModal);

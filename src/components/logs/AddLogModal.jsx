@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { addLog } from '../../actions/logActions';
+import { getTechs } from '../../actions/techActions';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -44,7 +45,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddLogModal = ({ logModal, logModalClose, addLog }) => {
+const AddLogModal = ({
+  logModal,
+  logModalClose,
+  addLog,
+  getTechs,
+  tech: { techs, loading },
+}) => {
   const [message, setMessage] = useState('');
   const [attention, setAttention] = useState(false);
   const [tech, setTech] = useState('');
@@ -55,6 +62,7 @@ const AddLogModal = ({ logModal, logModalClose, addLog }) => {
   useEffect(() => {
     if (logModal === true) {
       setModalOpen(true);
+      getTechs();
     }
     // eslint-disable-next-line
   }, [logModal]);
@@ -126,9 +134,13 @@ const AddLogModal = ({ logModal, logModalClose, addLog }) => {
                   <MenuItem value=''>
                     <em>Select Technician</em>
                   </MenuItem>
-                  <MenuItem value='John'>John</MenuItem>
-                  <MenuItem value='Sam'>Sam</MenuItem>
-                  <MenuItem value='Zoey'>Zoey</MenuItem>
+                  {!loading &&
+                    techs !== null &&
+                    techs.map((tech) => (
+                      <MenuItem key={tech.id} value={tech.firstName}>
+                        {tech.firstName} {tech.lastName}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </FormGroup>
@@ -164,6 +176,11 @@ const AddLogModal = ({ logModal, logModalClose, addLog }) => {
 
 AddLogModal.propTypes = {
   addLog: PropTypes.func.isRequired,
+  getTechs: PropTypes.func.isRequired,
 };
 
-export default connect(null, { addLog })(AddLogModal);
+const mapStateToProps = (state) => ({
+  tech: state.tech,
+});
+
+export default connect(mapStateToProps, { addLog, getTechs })(AddLogModal);

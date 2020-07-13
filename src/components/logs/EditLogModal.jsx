@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { updateLog } from '../../actions/logActions';
+import { getTechs } from '../../actions/techActions';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -49,6 +50,8 @@ const EditLogModal = ({
   editLogModalClose,
   current,
   updateLog,
+  getTechs,
+  tech: { techs, loading },
 }) => {
   const [message, setMessage] = useState('');
   const [attention, setAttention] = useState(false);
@@ -56,6 +59,7 @@ const EditLogModal = ({
 
   useEffect(() => {
     if (current) {
+      getTechs();
       setMessage(current.message);
       setAttention(current.attention);
       setTech(current.tech);
@@ -142,9 +146,13 @@ const EditLogModal = ({
                   <MenuItem value=''>
                     <em>Select Technician</em>
                   </MenuItem>
-                  <MenuItem value='John'>John</MenuItem>
-                  <MenuItem value='Sam'>Sam</MenuItem>
-                  <MenuItem value='Zoey'>Zoey</MenuItem>
+                  {!loading &&
+                    techs !== null &&
+                    techs.map((tech) => (
+                      <MenuItem key={tech.id} value={tech.firstName}>
+                        {tech.firstName} {tech.lastName}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </FormGroup>
@@ -180,10 +188,12 @@ const EditLogModal = ({
 
 EditLogModal.propTypes = {
   updateLog: PropTypes.func.isRequired,
+  getTechs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   current: state.log.current,
+  tech: state.tech,
 });
 
-export default connect(mapStateToProps, { updateLog })(EditLogModal);
+export default connect(mapStateToProps, { updateLog, getTechs })(EditLogModal);

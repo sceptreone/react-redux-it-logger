@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { deleteTech } from '../../actions/techActions';
+import { connect } from 'react-redux';
 
 import ListItem from '@material-ui/core/ListItem';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -8,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
-const TechItem = ({ tech }) => {
+const TechItem = ({ tech, deleteTech }) => {
   return (
     <Fragment>
       <ListItem>
@@ -16,7 +18,11 @@ const TechItem = ({ tech }) => {
           {tech.firstName} {tech.lastName}
         </Typography>
         <ListItemSecondaryAction>
-          <IconButton edge='end' aria-label='delete'>
+          <IconButton
+            onClick={() => deleteTech(tech.id)}
+            edge='end'
+            aria-label='delete'
+          >
             <DeleteIcon />
           </IconButton>
         </ListItemSecondaryAction>
@@ -28,6 +34,7 @@ const TechItem = ({ tech }) => {
 
 TechItem.propTypes = {
   tech: PropTypes.object.isRequired,
+  deleteTech: PropTypes.func.isRequired,
 };
 
-export default TechItem;
+export default connect(null, { deleteTech })(TechItem);

@@ -70,7 +70,7 @@ const AddBtn = () => {
     },
     {
       icon: <PersonIcon onClick={techListModalOpen} color='primary' />,
-      name: 'Add Person',
+      name: 'Technicians',
     },
   ];
 
